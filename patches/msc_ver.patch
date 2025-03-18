@@ -1,0 +1,91 @@
+Some _MSC_VER guards were a bit too restrictive, as MinGW also needs to use
+those Win32 API calls.
+
+--- ./tuxkart-0.4.0/src/tuxkart.cxx.orig	2025-03-17 18:33:15.902486584 -0700
++++ ./tuxkart-0.4.0/src/tuxkart.cxx	2025-03-17 18:44:18.512855863 -0700
+@@ -461,7 +461,7 @@
+     {
+       char buffer [ 20 ] ;
+ 
+-#ifdef _MSC_VER
++#if defined(_MSC_VER) || defined(__MINGW32__)
+       Sleep ( 1000 ) ;
+ #else
+ 	  sleep ( 1 ) ;
+@@ -483,14 +483,14 @@
+     if ( getenv ( "TUXKART_DATADIR" ) != NULL )
+       datadir = getenv ( "TUXKART_DATADIR" ) ;
+     else
+-#ifdef _MSC_VER
++#if defined(_MSC_VER) || defined(__MINGW32__)
+     if ( _access ( "data/levels.dat", 04 ) == 0 )
+ #else
+     if ( access ( "data/levels.dat", F_OK ) == 0 )
+ #endif
+       datadir = "." ;
+     else
+-#ifdef _MSC_VER
++#if defined(_MSC_VER) || defined(__MINGW32__)
+     if ( _access ( "../data/levels.dat", 04 ) == 0 )
+ #else
+     if ( access ( "../data/levels.dat", F_OK ) == 0 )
+@@ -507,7 +507,7 @@
+   fprintf ( stderr, "Data files will be fetched from: '%s'\n",
+                                                     datadir ) ;
+ 
+-#ifdef _MSC_VER
++#if defined(_MSC_VER) || defined(__MINGW32__)
+   if ( _chdir ( datadir ) == -1 )
+ #else
+   if ( chdir ( datadir ) == -1 )
+--- ./tuxkart-0.4.0/src/gfx.cxx.orig	2025-03-17 18:35:56.271515579 -0700
++++ ./tuxkart-0.4.0/src/gfx.cxx	2025-03-17 18:44:18.512471500 -0700
+@@ -137,6 +137,9 @@
+   glEnd () ;
+   glFlush () ;
+ 
++  // Sorry, no stereo for MinGW :(
++#ifndef __MINGW32__
++
+   static int firsttime = TRUE ;
+ 
+   if ( firsttime )
+@@ -171,6 +174,8 @@
+     outb ( (stereo==-1) ? ~3 : ~2, LPBASE+2 ) ;
+     stereo = -stereo ;
+   }
++
++#endif
+ }
+ 
+ 
+--- ./tuxkart-0.4.0/src/guNet.cxx.orig	2025-03-17 18:35:29.540444520 -0700
++++ ./tuxkart-0.4.0/src/guNet.cxx	2025-03-17 18:44:18.512729816 -0700
+@@ -19,7 +19,7 @@
+ 
+ #include <string.h>
+ #include <sys/types.h>
+-#if defined(_MSC_VER)
++#if defined(_MSC_VER) || defined(__MINGW32__)
+  #include <winsock.h>
+ #else
+  #include <sys/socket.h>
+--- ./tuxkart-0.4.0/src/start_tuxkart.cxx.orig	2025-03-17 18:45:23.952103770 -0700
++++ ./tuxkart-0.4.0/src/start_tuxkart.cxx	2025-03-17 18:35:18.746759094 -0700
+@@ -254,14 +254,14 @@
+     if ( getenv ( "TUXKART_DATADIR" ) != NULL )
+       datadir = getenv ( "TUXKART_DATADIR" ) ;
+     else
+-#ifdef _MSC_VER
++#if defined(_MSC_VER) || defined(__MINGW32__)
+     if ( _access ( "data/levels.dat", 04 ) == 0 )
+ #else
+     if ( access ( "data/levels.dat", F_OK ) == 0 )
+ #endif
+       datadir = "." ;
+     else
+-#ifdef _MSC_VER
++#if defined(_MSC_VER) || defined(__MINGW32__)
+     if ( _access ( "../data/levels.dat", 04 ) == 0 )
+ #else
+     if ( access ( "../data/levels.dat", F_OK ) == 0 )
