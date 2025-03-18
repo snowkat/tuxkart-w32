@@ -69,5 +69,5 @@ apply_patches
 if [ -z "$NOBUILD" ] ; then
     make_dockerfile
     mkdir -p "${OUTDIR}"
-    docker run --rm -it -v "${BUILDDIR}:/src" -v "${OUTDIR}:/out" "$IMAGE"
+    docker run --rm -v "${BUILDDIR}:/src" -v "${OUTDIR}:/out" "$IMAGE"
 fi
