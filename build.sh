@@ -18,7 +18,7 @@ docker_detect() {
     command -v docker >/dev/null || die 'Docker executable not found!'
     if docker buildx version >/dev/null ; then
         echo 'Using docker-buildx.'
-        BUILDCMD="buildx build"
+        BUILDCMD="buildx build --load"
     else
         echo 'Using legacy docker build.'
         BUILDCMD="build"
